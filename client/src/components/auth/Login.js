@@ -1,4 +1,11 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/authActions';
+// import classname from 'classname';
+import TextFieldGroup from '../common/textFiledGroup'
+
+
 
 class Login extends Component {
     constructor() {
@@ -24,39 +31,64 @@ class Login extends Component {
             email: this.state.email,
             password: this.state.password
         }
-        console.log(user)
+        this.props.loginUser(user);
     }
 
-  render() {
-    return (
-        <div className="login">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Log In</h1>
-              <p className="lead text-center">Sign in to your DevConnector account</p>
-              <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <input type="email" className="form-control form-control-lg" placeholder="Email Address" name="email" 
-                  value ={this.state.email}
-                  onChange = {this.onChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <input type="password" className="form-control form-control-lg" placeholder="Password" name="password" 
-                  value ={this.state.password}
-                  onChange = {this.onChange}
-                  />
-                </div>
-                <input type="submit" className="btn btn-info btn-block mt-4" />
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-    )
-  }
-}
+    componentWillReceiveProps(nextProp) {
+        if (nextProp.auth.isAuthenticated) {
+            this.props.history.push('/dashboard')
+        }
+        if (nextProp.errors) {
+            this.setState({ errors: nextProp.errors })
+        }
+    }
 
-export default Login
+    componentDidMount = () => {
+        if (this.props.auth.isAuthenticated) {
+            this.props.history.push('/dashboard');
+        }
+    }
+
+    render() {
+        const { errors } = this.state;
+        // console.log(this.props)
+
+
+        return ( <div className = "login" >
+            <div className = "container" >
+            <div className = "row" >
+            <div className = "col-md-8 m-auto" >
+            <h1 className = "display-4 text-center" > Log In </h1> <p className = "lead text-center" > Sign in to your DevConnector account </p> <form onSubmit = { this.onSubmit } >
+            <TextFieldGroup placeholder = "Email Address"
+            name = "email"
+            type = "email"
+            value = { this.state.email }
+            error = { errors.email }
+            onChange = { this.onChange } >
+            </TextFieldGroup>
+
+            <TextFieldGroup placeholder = "Password"
+            name = "password"
+            type = "password"
+            value = { this.state.password }
+            error = { errors.password }
+            onChange = { this.onChange } >
+            </TextFieldGroup>
+
+            <input type = "submit"
+            className = "btn btn-info btn-block mt-4" />
+            </form> </div> </div> </div> </div>
+
+        )
+    }
+}
+Login.propTypes = {
+    loginUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+}
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+    errors: state.errors
+})
+export default connect(mapStateToProps, { loginUser })(Login);
