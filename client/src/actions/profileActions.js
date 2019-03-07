@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_PROFILE, PROFILE_LOADING, GET_ERRORS, CLEAR_CURRENT_PROFILE, SET_CURRENT_USER } from './type';
+import { GET_PROFILES, GET_PROFILE, PROFILE_LOADING, GET_ERRORS, CLEAR_CURRENT_PROFILE, SET_CURRENT_USER } from './type';
 // import qs from 'qs';
 
 // get current profile
@@ -105,11 +105,11 @@ export const addEducation = (eduData, history) => dispatch => {
 export const deleteExperience = (id) => dispatch => {
     axios
         .delete(`api/profile/experience/${id}`, id)
-        .then(res => 
+        .then(res =>
             dispatch({
-                type:GET_PROFILE,
+                type: GET_PROFILE,
                 payload: res.data
-            })    
+            })
         )
         .catch(err =>
             dispatch({
@@ -123,16 +123,56 @@ export const deleteExperience = (id) => dispatch => {
 export const deleteEducation = (id) => dispatch => {
     axios
         .delete(`api/profile/education/${id}`, id)
-        .then(res => 
+        .then(res =>
             dispatch({
-                type:GET_PROFILE,
+                type: GET_PROFILE,
                 payload: res.data
-            })    
+            })
         )
         .catch(err =>
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
+            })
+        )
+}
+
+
+// get all profiles
+export const getProflies = () => dispatch => {
+    dispatch(setProfileLoading());
+    axios
+        .get('api/profile/all')
+        .then(res =>
+            dispatch({
+                type: GET_PROFILES,
+                payload: res.data
+            })
+        )
+        .catch(err =>
+            dispatch({
+                type: GET_PROFILES,
+                payload: null
+            })
+        )
+}
+
+
+// get profile by handle
+export const getProfileByHandle = (handle) => dispatch => {
+    dispatch(setProfileLoading());
+    axios
+        .get(`/api/profile/handle/${handle}`)
+        .then(res =>
+            dispatch({
+                type: GET_PROFILE,
+                payload: res.data
+            })
+        )
+        .catch(err =>
+            dispatch({
+                type: GET_PROFILE,
+                payload: null
             })
         )
 }

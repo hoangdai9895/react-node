@@ -24,7 +24,7 @@ router.get('/test', (req, res) => {
 // @access Private
 
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-
+    console.log(req.body, req.user)
     const { errors, isValid } = validatePostInput(req.body);
 
     // check validation
@@ -36,7 +36,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
     const newPost = new Post({
         text: req.body.text,
         name: req.body.name,
-        avatar: req.body.name,
+        avatar: req.body.avtar,
         user: req.user.id
     });
 
